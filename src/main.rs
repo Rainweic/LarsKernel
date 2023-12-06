@@ -1,6 +1,8 @@
 #![no_std] // 不链接 Rust 标准库
 #![no_main] // 禁用所有 Rust 层级的入口点
 
+mod vga_buffer;
+
 use core::panic::PanicInfo;
 
 static HELLO: &[u8] = b"Hello World!";
@@ -18,6 +20,9 @@ pub extern "C" fn _start() -> ! {
 
     for (i, &byte) in HELLO.iter().enumerate() {
         unsafe {
+            // 共2个byte用于显示
+            // 前一个byte(8个bit)显示ASCII码
+            // 后一个byte(8个bit)显示颜色
             *vga_buffer.offset(i as isize * 2) = byte;
             *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
         }
